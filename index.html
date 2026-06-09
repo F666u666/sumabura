@@ -111,18 +111,21 @@ svg{display:block}
 .tip .d{color:#b9bee0;font-size:10px;font-weight:700;font-family:var(--disp)}
 .empty{text-align:center;color:var(--ink-faint);font-size:13px;padding:34px 12px;font-weight:700;line-height:1.7}
 
-.dwrap2{display:flex;align-items:center;gap:16px}
-.donut{position:relative;width:132px;height:132px;flex:0 0 auto}
+.dwrap2{display:flex;flex-direction:column;align-items:center;gap:18px}
+.donut{position:relative;width:158px;height:158px;flex:0 0 auto}
 .donut svg{width:100%;height:100%;transform:rotate(-90deg)}
 .donut .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .donut .ctr .big{font-family:var(--disp);font-weight:900;line-height:1}
-.donut .ctr .cap{font-size:10.5px;color:var(--ink-faint);font-weight:800;margin-top:3px}
-.legend{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0}
-.lg{display:flex;align-items:center;gap:9px}
-.lg .dot{width:13px;height:13px;border-radius:4px;flex:0 0 auto}
-.lg .lt{font-size:12.5px;font-weight:800;white-space:nowrap}
-.lg .ls{font-size:10.5px;color:var(--ink-faint);font-weight:700;white-space:nowrap}
-.lg .lv{margin-left:auto;font-family:var(--disp);font-weight:900;font-size:14px;white-space:nowrap}
+.donut .ctr .cap{font-size:11px;color:var(--ink-faint);font-weight:800;margin-top:4px}
+.legend{width:100%}
+.legrow{display:flex;width:100%;gap:9px}
+.legcell{flex:1;border-radius:15px;padding:12px 6px;text-align:center;min-width:0}
+.legcell.g{background:var(--profit-soft)}.legcell.r{background:var(--loss-soft)}.legcell.n{background:var(--bg)}
+.legcell .ll{font-size:11.5px;font-weight:800}
+.legcell.g .ll{color:var(--profit)}.legcell.r .ll{color:var(--loss)}.legcell.n .ll{color:var(--ink-soft)}
+.legcell .lvv{font-family:var(--disp);font-size:17px;font-weight:900;margin-top:5px;color:var(--ink);white-space:nowrap}
+.legcell .lvv .u{font-size:12px;color:var(--ink-faint);margin-left:1px}
+.legcell .lss{font-size:10px;color:var(--ink-faint);font-weight:700;margin-top:3px}
 
 .mlist,.dlist{display:flex;flex-direction:column}
 .mrow{padding:12px 2px;border-bottom:1px solid var(--line-soft)}
@@ -440,10 +443,11 @@ function applyPatches(){
   localStorage.setItem("patch-2026-06","1");save();
 }
 function donutSVG(segs){
-  const C=2*Math.PI*50,total=segs.reduce((s,x)=>s+x.v,0)||1;let off=0,p="";
-  segs.forEach(s=>{if(s.v<=0)return;const len=s.v/total*C;
-    p+=`<circle cx="60" cy="60" r="50" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`;off+=len;});
-  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line-soft)" stroke-width="18"/>${p}</svg>`;
+  const C=2*Math.PI*50,total=segs.reduce((s,x)=>s+x.v,0)||1;
+  const act=segs.filter(s=>s.v>0).length,gap=act>1?9:0;let off=0,p="";
+  segs.forEach(s=>{if(s.v<=0)return;const frac=s.v/total,len=Math.max(1,frac*C-gap);
+    p+=`<circle cx="60" cy="60" r="50" fill="none" stroke="${s.c}" stroke-width="15" stroke-linecap="round" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off-gap/2).toFixed(2)}"/>`;off+=frac*C;});
+  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line-soft)" stroke-width="15"/>${p}</svg>`;
 }
 function sorted(){return [...data].sort((a,b)=>a.seq-b.seq);}
 function nextSeq(){return data.reduce((m,r)=>Math.max(m,r.seq),0)+1;}
@@ -526,18 +530,18 @@ function refreshAnalytics(){
   // 勝率ドーナツ
   $("#wr-donut").innerHTML=donutSVG([{v:winD,c:'#0fbf73'},{v:loseD,c:'#ff4b5c'},{v:drawD,c:'#cbd0e6'}])+
     `<div class="ctr"><div class="big" style="font-size:23px;color:${wr>=50?'var(--profit)':'var(--loss)'}">${decided?wr.toFixed(1)+'%':'—'}</div><div class="cap">勝率</div></div>`;
-  $("#wr-legend").innerHTML=
-    `<div class="lg"><span class="dot" style="background:#0fbf73"></span><span class="lt">勝った日</span><span class="lv" style="color:var(--profit)">${winD}日</span></div>`+
-    `<div class="lg"><span class="dot" style="background:#ff4b5c"></span><span class="lt">負けた日</span><span class="lv" style="color:var(--loss)">${loseD}日</span></div>`+
-    `<div class="lg"><span class="dot" style="background:#cbd0e6"></span><span class="lt">±0の日</span><span class="lv" style="color:var(--ink-soft)">${drawD}日</span></div>`;
+  $("#wr-legend").innerHTML=`<div class="legrow">`+
+    `<div class="legcell g"><div class="ll">勝った日</div><div class="lvv">${winD}<span class="u">日</span></div></div>`+
+    `<div class="legcell r"><div class="ll">負けた日</div><div class="lvv">${loseD}<span class="u">日</span></div></div>`+
+    `<div class="legcell n"><div class="ll">±0の日</div><div class="lvv">${drawD}<span class="u">日</span></div></div></div>`;
   // 勝ち額 vs 負け額ドーナツ
   const won=rows.filter(r=>r.amount>0).reduce((s,r)=>s+r.amount,0);
   const lost=rows.filter(r=>r.amount<0).reduce((s,r)=>s+Math.abs(r.amount),0);
   $("#pl-donut").innerHTML=donutSVG([{v:won,c:'#0fbf73'},{v:lost,c:'#ff4b5c'}])+
     `<div class="ctr"><div class="big" style="font-size:15px;color:${total>=0?'var(--profit)':'var(--loss)'}">${yenS(total)}</div><div class="cap">純利益</div></div>`;
-  $("#pl-legend").innerHTML=
-    `<div class="lg"><span class="dot" style="background:#0fbf73"></span><div style="min-width:0"><div class="lt">勝ち額</div><div class="ls">${winD}日</div></div><span class="lv" style="color:var(--profit)">${yenS(won)}</span></div>`+
-    `<div class="lg"><span class="dot" style="background:#ff4b5c"></span><div style="min-width:0"><div class="lt">負け額</div><div class="ls">${loseD}日</div></div><span class="lv" style="color:var(--loss)">-¥${lost.toLocaleString('ja-JP')}</span></div>`;
+  $("#pl-legend").innerHTML=`<div class="legrow">`+
+    `<div class="legcell g"><div class="ll">勝ち額</div><div class="lvv" style="color:var(--profit)">${yenS(won)}</div><div class="lss">${winD}日ぶん</div></div>`+
+    `<div class="legcell r"><div class="ll">負け額</div><div class="lvv" style="color:var(--loss)">-¥${lost.toLocaleString('ja-JP')}</div><div class="lss">${loseD}日ぶん</div></div></div>`;
 
   drawCum(rows);renderMonthList(rows);renderDowList(rows);
   renderHist(rows,$("#recent"),6,false);
