@@ -26,11 +26,22 @@
   --r-card:24px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);--nav-h:64px;
   --disp:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Rounded Mplus 1c",system-ui,sans-serif;
   --num:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN",system-ui,sans-serif;
+  /* 高級感トークン：拡散した多層シャドウ＋上端ハイライト＋ヘアラインリング */
+  --shadow:0 1px 2px rgba(28,32,58,.04),0 6px 14px -6px rgba(28,32,58,.10),0 22px 40px -18px rgba(28,32,58,.16);
+  --shadow-sm:0 1px 2px rgba(28,32,58,.04),0 8px 20px -12px rgba(28,32,58,.14);
+  --hi:inset 0 1px 0 rgba(255,255,255,.9);
+  --ring:0 0 0 1px rgba(28,32,58,.05);
+  --ease:cubic-bezier(.32,.72,0,1);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,-apple-system,sans-serif;
-  background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100dvh;
+  background:
+    radial-gradient(120% 60% at 85% -8%, rgba(47,123,255,.07), transparent 60%),
+    radial-gradient(110% 55% at 0% 4%, rgba(15,191,115,.06), transparent 58%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100dvh;
   padding-bottom:calc(var(--nav-h) + var(--safe-b) + 14px)}
 .num{font-family:var(--num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum";font-weight:800}
 .disp{font-family:var(--disp);font-weight:800}
@@ -44,15 +55,19 @@ body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,-apple-sy
 .ghost{width:40px;height:40px;border-radius:13px;border:0;background:var(--card);color:var(--ink-soft);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 12px rgba(22,26,46,.07)}
 .ghost:active{transform:scale(.92)}
 svg{display:block}
-.tab{display:none}.tab.on{display:block;animation:fade .25s}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tab{display:none}.tab.on{display:block;animation:fade .32s var(--ease)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.reveal{opacity:0;transform:translateY(18px);filter:blur(6px);transition:opacity .7s var(--ease),transform .7s var(--ease),filter .7s var(--ease)}
+.reveal.in{opacity:1;transform:none;filter:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none}}
 .page-title{font-family:var(--disp);font-size:24px;font-weight:900;letter-spacing:-.3px;margin:2px 4px 14px}
 
 /* HERO */
-.hero{border-radius:28px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;color:#fff;
-  box-shadow:0 14px 34px rgba(15,160,120,.34)}
+.hero{border-radius:30px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px rgba(28,32,58,.10),0 22px 44px -14px rgba(15,160,120,.5);
+  border:1px solid rgba(255,255,255,.12)}
 .hero.pos{background:linear-gradient(135deg,#16c97a 0%,#0fb0c4 52%,#2f7bff 100%)}
-.hero.neg{background:linear-gradient(135deg,#ff5e62 0%,#ff823d 100%);box-shadow:0 14px 34px rgba(255,94,98,.34)}
+.hero.neg{background:linear-gradient(135deg,#ff5e62 0%,#ff823d 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 6px rgba(28,32,58,.10),0 22px 44px -14px rgba(255,94,98,.5)}
 .hero::before{content:"";position:absolute;top:-60%;right:-20%;width:75%;height:200%;background:rgba(255,255,255,.13);transform:rotate(22deg);pointer-events:none}
 .hero::after{content:"";position:absolute;left:-30%;bottom:-60%;width:60%;height:160%;background:rgba(255,255,255,.08);transform:rotate(22deg);pointer-events:none}
 .hero .pills{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;position:relative}
@@ -67,13 +82,13 @@ svg{display:block}
 .hero .sub{font-size:12.5px;font-weight:700;opacity:.95;position:relative}
 
 /* TODAY */
-.today{background:var(--card);border-radius:var(--r-card);padding:17px;margin-bottom:14px;box-shadow:0 6px 20px rgba(22,26,46,.07)}
+.today{background:var(--card);border-radius:var(--r-card);padding:18px;margin-bottom:16px;box-shadow:var(--hi),var(--ring),var(--shadow)}
 .today .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
 .today .date{font-family:var(--disp);font-size:15px;font-weight:900;white-space:nowrap}
 .today .date .wd{color:var(--ink-faint);font-weight:800;margin-left:4px;font-size:13px}
 .today .badge{font-size:11px;font-weight:900;font-family:var(--disp);color:var(--violet);background:var(--violet-soft);border-radius:999px;padding:5px 11px;white-space:nowrap}
 .t-lbl{font-size:12.5px;color:var(--ink-soft);font-weight:800;text-align:center;margin-bottom:9px}
-.amount-box{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--bg);border-radius:18px;padding:11px 14px}
+.amount-box{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--bg);border-radius:18px;padding:13px 14px;box-shadow:inset 0 2px 4px rgba(28,32,58,.07),inset 0 0 0 1px rgba(28,32,58,.04)}
 .amount-box .sign{display:flex;gap:5px;margin-right:3px}
 .amount-box .sign button{border:0;background:#fff;color:var(--ink-faint);font-size:19px;font-weight:900;width:38px;height:38px;border-radius:12px;cursor:pointer;box-shadow:0 2px 6px rgba(22,26,46,.08);transition:transform .1s}
 .amount-box .sign button:active{transform:scale(.9)}
@@ -87,13 +102,13 @@ svg{display:block}
 
 /* TILES */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.tile{border-radius:18px;padding:13px 12px;box-shadow:0 5px 16px rgba(22,26,46,.06)}
+.tile{border-radius:18px;padding:14px 13px;box-shadow:var(--hi),var(--ring),var(--shadow-sm)}
 .tile.b{background:var(--blue-soft)}.tile.y{background:var(--yellow-soft)}.tile.g{background:var(--profit-soft)}.tile.r{background:var(--loss-soft)}
 .tile .k{font-size:11px;font-weight:800;white-space:nowrap}
 .tile.b .k{color:var(--blue)}.tile.y .k{color:#cc8e00}.tile.g .k{color:var(--profit)}.tile.r .k{color:var(--loss)}
 .tile .v{font-family:var(--disp);font-size:17px;font-weight:900;margin-top:3px;color:var(--ink);white-space:nowrap}
 
-.card{background:var(--card);border-radius:var(--r-card);padding:16px;margin-bottom:14px;box-shadow:0 6px 20px rgba(22,26,46,.07)}
+.card{background:var(--card);border-radius:var(--r-card);padding:18px;margin-bottom:16px;box-shadow:var(--hi),var(--ring),var(--shadow)}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
 .card-head h2{font-family:var(--disp);font-size:15px;margin:0;font-weight:900}
 .card-head .sub{font-size:11.5px;color:var(--ink-faint);font-weight:800}
@@ -195,8 +210,11 @@ svg{display:block}
 .in{width:100%;background:var(--bg);border:0;border-radius:14px;padding:14px;color:var(--ink);font-size:15px;font-weight:600;outline:none;font-family:inherit}
 .in:focus{box-shadow:inset 0 0 0 2px var(--blue)}
 textarea.in{resize:none;height:48px}
-.primary{width:100%;background:linear-gradient(135deg,#2f7bff,#1f9dff);color:#fff;border:0;border-radius:16px;padding:16px;font-family:var(--disp);font-size:16px;font-weight:900;cursor:pointer;margin-top:16px;box-shadow:0 8px 20px rgba(47,123,255,.4)}
-.primary:active{transform:scale(.99)}
+.primary{position:relative;width:100%;background:linear-gradient(135deg,#2f7bff,#1f9dff);color:#fff;border:0;border-radius:18px;padding:17px;font-family:var(--disp);font-size:16px;font-weight:900;cursor:pointer;margin-top:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 24px -6px rgba(47,123,255,.55);transition:transform .25s var(--ease),box-shadow .25s var(--ease);display:flex;align-items:center;justify-content:center}
+.primary .pi{position:absolute;right:9px;top:50%;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;transform:translateY(-50%);transition:transform .3s var(--ease)}
+.primary:active{transform:scale(.98);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 12px -4px rgba(47,123,255,.5)}
+.primary:active .pi{transform:translateY(-50%) translateX(3px)}
 .danger{width:100%;background:transparent;color:var(--loss);border:2px solid var(--loss-soft);border-radius:14px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;margin-top:10px;font-family:var(--disp)}
 .tools{display:flex;gap:10px;margin-bottom:8px}
 .tool{flex:1;background:var(--bg);border:0;color:var(--ink);border-radius:14px;padding:14px;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--disp)}
@@ -345,7 +363,7 @@ textarea.in{resize:none;height:48px}
   <input class="in" id="e-date" type="date" style="margin-bottom:15px">
   <label class="field">メモ（任意）</label>
   <textarea class="in" id="e-memo" placeholder="例: ボーリング / 旅行 / 新キャラ練習" maxlength="120"></textarea>
-  <button class="primary" id="e-save">保存する</button>
+  <button class="primary" id="e-save">保存する<span class="pi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
   <button class="danger" id="e-del" style="display:none">この記録を削除</button>
 </div>
 
@@ -363,7 +381,7 @@ textarea.in{resize:none;height:48px}
   <div style="margin:20px 0 8px;font-size:13px;font-weight:900;font-family:var(--disp)">貼り付けで追加取り込み</div>
   <div class="hint" style="margin-top:0;margin-bottom:10px">「日付・金額（・メモ）」の列をコピペ。1行1件。区切りはカンマ/タブ/スペース。<br>例: <code>2025/01/17  63000  ボーリング</code></div>
   <textarea class="io" id="paste" placeholder="2025/01/17	63000	ボーリング&#10;2025/01/19	24400"></textarea>
-  <button class="primary" id="paste-btn" style="margin-top:0">この内容を取り込む</button>
+  <button class="primary" id="paste-btn" style="margin-top:0">この内容を取り込む<span class="pi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
   <div style="margin:22px 0 8px;font-size:13px;font-weight:900;color:var(--loss);font-family:var(--disp)">全データを削除</div>
   <button class="danger" id="wipe-btn" style="margin-top:0">すべての記録を消す</button>
 </div>
@@ -704,6 +722,35 @@ $("#paste-btn").onclick=importPaste;
 $("#wipe-btn").onclick=()=>{if(confirm("本当にすべての記録を削除しますか？元に戻せません。")){data=[];save();refreshToday();refreshAnalytics();closeData();toast("全データを削除したよ");}};
 
 applyPatches();refreshToday();refreshAnalytics();
+
+/* スクロール出現アニメ（高級感）。reduced-motionはCSS側で尊重 */
+(function(){
+  const els=document.querySelectorAll('.hero,.today,.tiles,.card,.page-title');
+  els.forEach(el=>el.classList.add('reveal'));
+  if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('in'));return;}
+  let io;
+  try{
+    io=new IntersectionObserver((ents)=>{ents.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.05,rootMargin:"0px 0px -5% 0px"});
+    els.forEach(el=>io.observe(el));
+  }catch(e){els.forEach(el=>el.classList.add('in'));return;}
+  // タブ切替時、新タブの要素を軽くリセットしてスタッガー再生（画面内のみ即再生、画面外はIOがスクロールで拾う）
+  const orig=showTab;
+  showTab=function(name){
+    orig(name);
+    requestAnimationFrame(()=>{
+      const list=document.querySelectorAll('#tab-'+name+' .reveal');
+      list.forEach((el,i)=>{
+        const r=el.getBoundingClientRect();
+        const visible=r.top<window.innerHeight*0.96 && r.bottom>40;
+        if(visible){el.style.transitionDelay=(Math.min(i,6)*50)+'ms';el.classList.remove('in');}
+      });
+      requestAnimationFrame(()=>list.forEach(el=>{
+        const r=el.getBoundingClientRect();
+        if(r.top<window.innerHeight*0.96 && r.bottom>40)el.classList.add('in');
+      }));
+    });
+  };
+})();
 </script>
 </body>
 </html>
