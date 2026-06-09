@@ -1,0 +1,7 @@
+.claude/
+.vercel
+.DS_Store
+# アイコンはindex.htmlに埋め込み済みなので元画像は不要
+icon-180.png
+73ea79c6-9151-43a9-b6c7-0ca1b2be7780.png
+*.png
