@@ -127,22 +127,6 @@ svg{display:block}
 .tip .d{color:#b9bee0;font-size:10px;font-weight:700;font-family:var(--disp)}
 .empty{text-align:center;color:var(--ink-faint);font-size:13px;padding:34px 12px;font-weight:700;line-height:1.7}
 
-.dwrap2{display:flex;flex-direction:column;align-items:center;gap:18px}
-.donut{position:relative;width:158px;height:158px;flex:0 0 auto}
-.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
-.donut .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.donut .ctr .big{font-family:var(--disp);font-weight:900;line-height:1}
-.donut .ctr .cap{font-size:11px;color:var(--ink-faint);font-weight:800;margin-top:4px}
-.legend{width:100%}
-.legrow{display:flex;width:100%;gap:9px}
-.legcell{flex:1;border-radius:15px;padding:12px 6px;text-align:center;min-width:0}
-.legcell.g{background:var(--profit-soft)}.legcell.r{background:var(--loss-soft)}.legcell.n{background:var(--bg)}
-.legcell .ll{font-size:11.5px;font-weight:800}
-.legcell.g .ll{color:var(--profit)}.legcell.r .ll{color:var(--loss)}.legcell.n .ll{color:var(--ink-soft)}
-.legcell .lvv{font-family:var(--disp);font-size:17px;font-weight:900;margin-top:5px;color:var(--ink);white-space:nowrap}
-.legcell .lvv .u{font-size:12px;color:var(--ink-faint);margin-left:1px}
-.legcell .lss{font-size:10px;color:var(--ink-faint);font-weight:700;margin-top:3px}
-
 .mlist,.dlist{display:flex;flex-direction:column}
 .mrow{padding:12px 2px;border-bottom:1px solid var(--line-soft)}
 .mrow:last-child{border-bottom:0}
@@ -229,6 +213,187 @@ textarea.in{resize:none;height:48px}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
 .confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(106vh) rotate(640deg);opacity:.9}}
+
+
+/* Mobile score sheet — white, ink and one slate-blue accent. */
+:root{
+ --bg:#fff;--card:#fff;--surface:#fff;--ink:#15191f;--ink-soft:#414b57;--ink-faint:#5d6a79;
+ --line:#d7dee6;--line-soft:#e7ecf2;--profit:#173f64;--profit-soft:#edf4fa;--loss:#a65040;--loss-soft:#fae9e2;
+ --blue:#365975;--blue-soft:#e8eff6;--violet:#40556a;--violet-soft:#edf1f5;
+ --r-card:10px;--nav-h:60px;--shadow:none;--shadow-sm:none;--hi:none;--ring:none;
+ --disp:"Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+ --num:"SF Pro Display","Helvetica Neue",system-ui,sans-serif;--ease:cubic-bezier(.22,1,.36,1);
+}
+body{background:var(--bg);line-height:1.5}
+button{font:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.wrap{max-width:1120px;padding:calc(4px + var(--safe-t)) 18px 0}
+.head{height:58px;margin:0;border-bottom:1px solid var(--line);gap:8px}
+.brand{min-width:0;gap:9px}
+.brand .t{font-size:15px;font-weight:600;letter-spacing:-.025em;white-space:nowrap}
+.brand .s{font-size:10px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:145px}
+.mark{width:34px;height:34px;flex-shrink:0;border-radius:6px;background:#253749;box-shadow:none}
+.mark svg{width:18px;height:18px}
+.ghost{width:44px;height:44px;flex-shrink:0;border:1px solid var(--line);background:transparent;box-shadow:none;border-radius:8px;color:var(--ink)}
+.ghost:active{transform:none}
+.preview-tag{font-size:10px;color:var(--ink-faint);white-space:nowrap;margin-left:auto}
+.tab.on{animation:score-in 170ms var(--ease) both}
+@keyframes score-in{from{opacity:.55;translate:0 3px}to{opacity:1;translate:0 0}}
+#tab-home.on{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.today{
+ min-width:0;margin:0;padding:11px 12px 9px;
+ background:#f4f7fa;border:1px solid var(--line);border-radius:8px;box-shadow:none;
+}
+.entry-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 11px}
+.entry-heading h2{margin:0;font-size:15px;font-weight:550;line-height:1.3}
+.today .date{font-size:12px;font-weight:450;color:var(--ink-soft);white-space:nowrap}
+.today .date .wd{font-size:10px;font-weight:450;margin-left:4px}
+.amount-box{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:9px;padding:5px 9px 5px 5px;background:#fff;border:1px solid #afbfce;border-radius:8px;box-shadow:none}
+.amount-box:focus-within{border-color:var(--blue);outline:1px solid var(--blue)}
+.amount-box .sign{display:flex;gap:1px;padding:2px;margin:0;background:#e8edf3;border-radius:5px}
+.amount-box .sign button{width:41px;height:44px;border:0;background:transparent;border-radius:4px;box-shadow:none;color:var(--ink-soft);font-size:19px;font-weight:500}
+.amount-box .sign button.win.on{background:var(--profit);color:#fff;box-shadow:none}
+.amount-box .sign button.lose.on{background:var(--loss-soft);color:var(--loss);box-shadow:inset 0 0 0 1px #d49b8b}
+.amount-box .y{font:450 18px/1 var(--num);color:#526579}
+.amount-box input{width:100%;min-height:48px;padding:0 1px 0 0;font:500 26px/1 var(--num);letter-spacing:-.025em;text-align:right}
+.amount-box input::placeholder{color:#6c7d8f}
+.amount-box input:focus-visible{outline:none}
+.entry-foot{display:flex;justify-content:space-between;gap:6px;margin-top:8px;color:var(--ink-faint);font-size:10px;font-weight:450}
+.balance-summary{
+ --balance-accent:var(--ink);--balance-surface:#f5f7f9;
+ min-width:0;margin:12px 0;padding:14px 12px 13px;
+ border:1px solid var(--line);border-inline-start:2px solid var(--balance-accent);
+ border-radius:5px;background:var(--balance-surface);
+}
+.balance-summary[data-tone="positive"]{--balance-accent:var(--profit);--balance-surface:var(--profit-soft)}
+.balance-summary[data-tone="negative"]{--balance-accent:var(--loss);--balance-surface:var(--loss-soft)}
+.balance-board{min-width:0;padding:14px 0 0}
+.balance-totals{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:12px;align-items:center}
+.balance-main{min-width:0}
+.balance-main h1,.balance-month .k{margin:0;color:var(--ink-soft);font-size:12px;font-weight:500}
+.balance-total{color:var(--balance-accent);font:500 clamp(32px,11vw,60px)/1.08 var(--num);letter-spacing:-.05em;margin:4px 0 6px;overflow-wrap:anywhere}
+.balance-prefix{font-size:.58em;letter-spacing:-.015em;margin-inline-end:.14em}
+.balance-total.is-long{font-size:clamp(22px,7.4vw,43px)}
+.balance-meta{color:var(--ink-faint);font-size:10px;line-height:1.65}
+.balance-meta b{font-weight:500;color:var(--ink-soft)}
+.balance-month{min-width:0;border-left:1px solid var(--line);padding-left:11px}
+.balance-month strong{display:block;margin-top:3px;font:500 clamp(15px,4.5vw,24px)/1.2 var(--num);letter-spacing:-.02em;overflow-wrap:anywhere}
+.balance-month.g strong{color:var(--profit)}
+.balance-month.r strong{color:var(--loss)}
+.trend-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+.trend-heading h2{margin:0;font-size:13px;font-weight:550}
+.trend-range{display:flex;gap:2px;border:1px solid var(--line);border-radius:6px;padding:2px}
+.trend-range button{min-height:34px;padding:0 8px;border:0;border-radius:4px;background:transparent;color:var(--ink-faint);font-size:10px;white-space:nowrap}
+.trend-range button[aria-pressed=true]{background:var(--blue-soft);color:#213e57;font-weight:550}
+.trend-chart{display:grid;grid-template-columns:45px minmax(0,1fr);gap:0 5px}
+.trend-y{position:relative;grid-column:1;height:116px;color:var(--ink-faint);font:500 10px/1 var(--num);font-variant-numeric:tabular-nums}
+.trend-y span{position:absolute;right:0;transform:translateY(-50%);white-space:nowrap}
+.trend-plot{grid-column:2;min-width:0;height:116px}
+.trend-plot svg{width:100%;height:100%;overflow:visible}
+.trend-dates{grid-column:2;display:flex;justify-content:space-between;gap:6px;color:var(--ink-faint);margin-top:5px;font-size:10px;font-variant-numeric:tabular-nums}
+.trend .empty{padding:24px 8px}
+.balance-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:12px;border-block:1px solid var(--line)}
+.balance-stats div{min-width:0;display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:9px 9px 9px 0}
+.balance-stats div+div{border-left:1px solid var(--line);padding:9px 0 9px 9px}
+.balance-stats span{font-size:10px;color:var(--ink-soft);white-space:nowrap}
+.balance-stats strong{font:500 clamp(12px,3.8vw,18px)/1.15 var(--num);letter-spacing:-.02em;text-align:right;overflow-wrap:anywhere}
+.recent-card{min-width:0;margin:13px 0 0}
+.recent-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line)}
+.recent-heading h2{margin:0;font-size:16px;font-weight:550}
+.recent-heading .link{padding:0;min-height:44px;white-space:nowrap}
+.recent-heading .link span{margin-left:3px}
+.row{border-radius:0;gap:8px;min-height:54px;padding:8px 2px}
+.row:hover{background:#f2f6fa}
+.row .seq{width:30px;color:var(--ink-faint);font-family:var(--num);font-weight:550}
+.row .dt{width:38px}
+.row .amt,.row .dt .md,.row .cum,.mamt,.davg{font-family:var(--num);font-variant-numeric:tabular-nums;font-weight:500}
+.row .amt{font-size:15px}
+.row .cum{font-size:10px}
+.card{border:1px solid var(--line);padding:14px;border-radius:9px;box-shadow:none}
+.card-head{gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.card-head h2{font-weight:550;letter-spacing:-.015em}
+.brand .s,.link,.add-mini,.see,.tool,.seg button,.nav button,.mname,.msub,.dn,.dinfo,.hist .grp,.row .dt .dw,.sheet h3,.field,.signseg button,.e-amount .y,.e-amount input,.primary,.danger{font-weight:500}
+.link,.add-mini,.see,.tool{min-height:44px;border-radius:7px}
+.add-mini,.primary{background:#304b64;box-shadow:none;border-radius:8px}
+.primary:active{box-shadow:none}.primary .pi{background:transparent}
+.seg{border:1px solid var(--line);border-radius:6px;background:#edf2f7}
+.seg button{border-radius:4px;min-height:34px}
+.seg button.on{box-shadow:none;color:var(--ink);background:#fff}
+.page-title{font-size:clamp(23px,4vw,32px);font-weight:550;letter-spacing:-.035em;margin:17px 0 16px}
+.ratio-card{--ratio-win:#24547b;--ratio-loss:#e6a58e;--ratio-even:#dce4ec}
+.ratio-summary{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:9px;margin:0 0 9px;color:var(--ink-faint);font-size:11px}
+.ratio-value{font:500 clamp(22px,6vw,30px)/1.12 var(--num);letter-spacing:-.035em;color:var(--ink);overflow-wrap:anywhere}
+#pl-value[data-tone="positive"]{color:var(--profit)}
+#pl-value[data-tone="negative"]{color:var(--loss)}
+.ratio-bar{display:flex;height:8px;background:var(--line-soft);border-radius:2px;overflow:hidden}
+.ratio-bar span{flex:none}
+.ratio-win{--ratio-color:var(--ratio-win)}
+.ratio-loss{--ratio-color:var(--ratio-loss)}
+.ratio-even{--ratio-color:var(--ratio-even)}
+.ratio-bar span,.ratio-detail dt::before{background:var(--ratio-color)}
+.ratio-detail{display:flex;gap:8px;margin:11px 0 0}
+.ratio-detail div{flex:1;min-width:0}
+.ratio-detail div+div{border-left:1px solid var(--line-soft);padding-left:8px}
+.ratio-detail dt{display:flex;align-items:center;gap:5px;color:var(--ink-soft);font-size:11px}
+.ratio-detail dt::before{content:"";flex:0 0 6px;height:6px;border-radius:1px}
+.ratio-detail dd{margin:2px 0 0;font:500 clamp(14px,3.8vw,18px)/1.25 var(--num);overflow-wrap:anywhere}
+.ratio-detail dd span{font-size:11px;color:var(--ink-faint);margin-left:2px}
+#pl-breakdown .ratio-detail dd span{display:block;margin:3px 0 0}
+.dn,.dbar2,.dbar2 i{border-radius:4px}
+.nav{background:#fff;border-top:1px solid var(--line);box-shadow:none;backdrop-filter:none;max-width:none;padding-top:2px}
+.nav button{min-height:49px;position:relative;border-radius:0;color:var(--ink-faint);gap:0}
+.nav button .nb,.nav button.on .nb{background:none;border-radius:0;height:25px}
+.nav button.on{color:#213e57}
+.nav button.on::before{content:"";position:absolute;top:-2px;left:calc(50% - 12px);width:24px;height:2px;background:var(--blue)}
+/* Transitions.dev — Panel reveal; adapted to existing bottom sheets. */
+.sheet{
+ --panel-open-dur:400ms;--panel-close-dur:350ms;--panel-translate-y:28px;--panel-blur:2px;
+ --panel-ease:cubic-bezier(.22,1,.36,1);
+ max-height:calc(100dvh - 22px - var(--safe-t));overflow-y:auto;overscroll-behavior:contain;
+ border-radius:12px 12px 0 0;box-shadow:0 -12px 48px #20354b20;
+ transform:translateY(var(--panel-translate-y));opacity:0;filter:blur(var(--panel-blur));visibility:hidden;pointer-events:none;
+ transition:transform var(--panel-close-dur) var(--panel-ease),opacity var(--panel-close-dur) var(--panel-ease),
+ filter var(--panel-close-dur) var(--panel-ease),visibility 0s var(--panel-close-dur)
+}
+.sheet.open{transform:translateY(0);opacity:1;filter:blur(0);visibility:visible;pointer-events:auto;
+ transition:transform var(--panel-open-dur) var(--panel-ease),opacity var(--panel-open-dur) var(--panel-ease),filter var(--panel-open-dur) var(--panel-ease)}
+.sheet-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.sheet-heading h3{margin:0}
+.sheet-heading button{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink-soft)}
+.signseg,.e-amount,.in,.io,.danger,.toast{border-radius:7px}
+.signseg,.e-amount,.in,.io,.tool,.see{background:#edf2f7}
+.signseg button{border-radius:5px}.signseg button.on{box-shadow:none!important}
+body.sheet-open{overflow:hidden}
+@media(min-width:760px){
+ body{padding-bottom:36px}
+ .wrap{padding:calc(9px + var(--safe-t)) 28px 0}
+ .head{height:66px;margin-bottom:23px}
+ .nav{position:static;max-width:none;min-width:0;margin:0 0 0 auto;padding:0;gap:9px;border:0;background:transparent}
+ .nav button{flex:none;flex-direction:row;gap:7px;padding:0 12px;font-size:12px}
+ .nav button .nb,.nav button.on .nb{width:21px;background:none}
+ .nav button.on::before{top:auto;bottom:0;width:100%;left:0}
+ .nav button svg{width:17px;height:17px}
+ #tab-home.on{grid-template-columns:minmax(235px,.79fr) minmax(0,1.7fr);column-gap:32px;align-items:start}
+ .balance-summary{grid-column:1/-1;margin:0 0 16px;padding:18px 20px}
+ .balance-totals{grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:620px}
+ .today{padding:14px}
+ .balance-board{padding:0}
+ .recent-card{grid-column:1/-1;margin-top:17px}
+ .trend-y,.trend-plot{height:150px}
+ .balance-stats div{padding-block:12px}
+ .page-title{margin-top:0}
+ #tab-analysis.on{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ #tab-analysis .page-title,#tab-analysis .card:first-of-type{grid-column:1/-1}
+ #tab-analysis .page-title,#tab-analysis .card{margin:0}
+ #tab-analysis .chart-box{height:245px}
+}
+@media(max-width:365px){
+ .wrap{padding-inline:14px}
+ .head{gap:5px}.brand .t{font-size:14px}
+ .balance-totals{gap:8px}.balance-month{padding-left:8px}
+ .trend-range button{padding-inline:6px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -239,6 +404,20 @@ textarea.in{resize:none;height:48px}
       <div class="mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M21 7v5"/><path d="M21 7h-5"/></svg></div>
       <div><div class="t">スマブラ収支</div><div class="s" id="brand-sub">記録をはじめよう</div></div>
     </div>
+    <nav class="nav" id="nav" aria-label="表示切り替え">
+  <button data-tab="home" class="on" aria-current="page">
+    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21V12h6v9"/></svg></span>
+    ホーム
+  </button>
+  <button data-tab="analysis">
+    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg></span>
+    分析
+  </button>
+  <button data-tab="history">
+    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
+    記録
+  </button>
+</nav>
     <button class="ghost" id="open-data" aria-label="データ管理">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -246,43 +425,58 @@ textarea.in{resize:none;height:48px}
 
   <!-- ============ HOME ============ -->
   <section class="tab on" id="tab-home">
-    <div class="hero pos" id="hero">
-      <div class="pills">
-        <span class="pill" id="rank-pill"><span class="em">⭐</span><span id="rank-name">ルーキー</span></span>
-        <span class="pill" id="streak-pill"><span class="em">🔥</span><span id="streak-text">—</span></span>
-      </div>
-      <div class="lbl">累計収支</div>
-      <div class="total num" id="hero-total">¥0</div>
-      <div class="sub" id="hero-sub"></div>
-    </div>
-
-    <div class="today">
-      <div class="top">
-        <div class="date" id="t-date">—</div>
-        <div class="badge" id="t-seq">本日</div>
-      </div>
-      <div class="t-lbl">今日の収支を入力</div>
-      <div class="amount-box">
-        <div class="sign" id="t-sign">
-          <button class="win on" data-sign="1">＋</button>
-          <button class="lose" data-sign="-1">−</button>
+    <section class="balance-summary" id="balance-summary" aria-labelledby="balance-title">
+      <div class="balance-totals">
+        <div class="balance-main">
+          <h1 id="balance-title">累計収支</h1>
+          <div class="balance-total num" id="hero-total"><span class="balance-prefix">¥</span><span>0</span></div>
+          <div class="balance-meta" id="hero-sub"></div>
         </div>
-        <span class="y">¥</span>
-        <input id="t-amt" type="text" inputmode="numeric" placeholder="0" autocomplete="off">
+        <div class="balance-month" id="tile-month">
+          <span class="k">今月の収支</span>
+          <strong class="num" id="st-month">¥0</strong>
+        </div>
       </div>
-      <div class="t-eff" id="t-eff"></div>
-    </div>
+    </section>
 
-    <div class="tiles">
-      <div class="tile b"><div class="k">通算勝率</div><div class="v num" id="st-wr">—</div></div>
-      <div class="tile y"><div class="k">自己ベスト</div><div class="v num" id="st-best">—</div></div>
-      <div class="tile g" id="tile-month"><div class="k">今月の収支</div><div class="v num" id="st-month">¥0</div></div>
-    </div>
+    <section class="today" aria-labelledby="today-title">
+      <div class="entry-heading">
+        <h2 id="today-title"><label for="t-amt">今日の収支</label></h2>
+        <time class="date" id="t-date">—</time>
+      </div>
+      <div class="amount-box">
+        <div class="sign" id="t-sign" role="group" aria-label="収支の符号">
+          <button class="win on" data-sign="1" aria-label="プラス" aria-pressed="true">＋</button>
+          <button class="lose" data-sign="-1" aria-label="マイナス" aria-pressed="false">−</button>
+        </div>
+        <span class="y" aria-hidden="true">¥</span>
+        <input id="t-amt" type="text" inputmode="numeric" placeholder="0" autocomplete="off" aria-describedby="t-autosave">
+      </div>
+      <div class="entry-foot"><span id="t-autosave">入力はこの端末に自動保存</span><span id="t-seq">本日</span></div>
+    </section>
 
-    <div class="card">
-      <div class="card-head"><h2>直近の記録</h2><button class="link" id="go-hist">すべて見る ›</button></div>
+    <section class="balance-board" aria-labelledby="trend-title">
+      <div class="trend">
+        <div class="trend-heading">
+          <h2 id="trend-title">累計の推移</h2>
+          <div class="trend-range" id="home-range" role="group" aria-label="グラフの表示期間">
+            <button data-period="12" aria-pressed="true">直近12件</button>
+            <button data-period="0" aria-pressed="false">全期間</button>
+          </div>
+        </div>
+        <div id="hero-trend"></div>
+      </div>
+
+      <div class="balance-stats">
+        <div><span>通算勝率</span><strong class="num" id="st-wr">—</strong></div>
+        <div><span>自己ベスト</span><strong class="num" id="st-best">—</strong></div>
+      </div>
+    </section>
+
+    <section class="recent-card" aria-labelledby="recent-title">
+      <div class="recent-heading"><h2 id="recent-title">直近の記録</h2><button class="link" id="go-hist">すべて見る <span aria-hidden="true">↗</span></button></div>
       <div class="hist recent" id="recent"></div>
-    </div>
+    </section>
   </section>
 
   <!-- ============ ANALYSIS ============ -->
@@ -300,14 +494,16 @@ textarea.in{resize:none;height:48px}
       <div class="chart-box" id="cum-chart"></div>
     </div>
 
-    <div class="card">
-      <div class="card-head"><h2>勝率（その日の勝ち負け）</h2></div>
-      <div class="dwrap2"><div class="donut" id="wr-donut"></div><div class="legend" id="wr-legend"></div></div>
+    <div class="card ratio-card">
+      <div class="card-head"><h2>勝率</h2></div>
+      <p class="ratio-summary"><strong class="ratio-value num" id="wr-value">—</strong><span>±0の日を除く</span></p>
+      <div id="wr-breakdown"></div>
     </div>
 
-    <div class="card">
-      <div class="card-head"><h2>勝ち額 vs 負け額</h2></div>
-      <div class="dwrap2"><div class="donut" id="pl-donut"></div><div class="legend" id="pl-legend"></div></div>
+    <div class="card ratio-card">
+      <div class="card-head"><h2>勝ち額と負け額</h2></div>
+      <p class="ratio-summary"><strong class="ratio-value num" id="pl-value">—</strong><span>差し引き</span></p>
+      <div id="pl-breakdown"></div>
     </div>
 
     <div class="card">
@@ -334,35 +530,22 @@ textarea.in{resize:none;height:48px}
 
 </div>
 
-<nav class="nav" id="nav">
-  <button data-tab="home" class="on">
-    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21V12h6v9"/></svg></span>
-    ホーム
-  </button>
-  <button data-tab="analysis">
-    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg></span>
-    分析
-  </button>
-  <button data-tab="history">
-    <span class="nb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span>
-    記録
-  </button>
-</nav>
+
 
 <!-- ENTRY SHEET -->
 <div class="scrim" id="scrim"></div>
-<div class="sheet" id="entry">
+<div class="sheet" id="entry" role="dialog" aria-modal="true" aria-labelledby="sheet-title" inert>
   <div class="grip"></div>
-  <h3 id="sheet-title">記録を追加</h3>
+  <div class="sheet-heading"><h3 id="sheet-title">記録を追加</h3><button type="button" data-close="entry">閉じる</button></div>
   <div class="signseg" id="signseg">
     <button class="win on" data-sign="1">＋ プラス</button>
     <button class="lose" data-sign="-1">− マイナス</button>
   </div>
-  <div class="e-amount"><span class="y">¥</span><input id="e-amt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
+  <div class="e-amount"><span class="y">¥</span><input aria-label="金額" id="e-amt" type="text" inputmode="numeric" placeholder="0" autocomplete="off"></div>
   <div class="preview" id="e-preview"></div>
-  <label class="field">日付</label>
+  <label class="field" for="e-date">日付</label>
   <input class="in" id="e-date" type="date" style="margin-bottom:15px">
-  <label class="field">メモ（任意）</label>
+  <label class="field" for="e-memo">メモ（任意）</label>
   <textarea class="in" id="e-memo" placeholder="例: ボーリング / 旅行 / 新キャラ練習" maxlength="120"></textarea>
   <button class="primary" id="e-save">保存する<span class="pi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
   <button class="danger" id="e-del" style="display:none">この記録を削除</button>
@@ -370,9 +553,9 @@ textarea.in{resize:none;height:48px}
 
 <!-- DATA SHEET -->
 <div class="scrim" id="scrim2"></div>
-<div class="sheet" id="data">
+<div class="sheet" id="data" role="dialog" aria-modal="true" aria-labelledby="data-title" inert>
   <div class="grip"></div>
-  <h3>データ管理</h3>
+  <div class="sheet-heading"><h3 id="data-title">データ管理</h3><button type="button" data-close="data">閉じる</button></div>
   <div class="tools">
     <button class="tool" id="export-btn">⬇ 書き出し</button>
     <button class="tool" id="import-btn">⬆ 読み込み</button>
@@ -387,7 +570,7 @@ textarea.in{resize:none;height:48px}
   <button class="danger" id="wipe-btn" style="margin-top:0">すべての記録を消す</button>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 
 <script>
 "use strict";
@@ -440,8 +623,8 @@ const SEED=[
 ];
 
 let data=load();
-let range=30, showAll=false, curTab="home";
-let editId=null, eSign=1, tSign=1, lastTotal=null;
+let range=30, homeRange=12, showAll=false, curTab="home";
+let editId=null, eSign=1, tSign=1;
 
 function load(){
   let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY));}catch(e){}
@@ -461,12 +644,13 @@ function applyPatches(){
   if(!data.some(r=>r.date==="2026-06-09"&&r.amount===59000))data.push({id:uid(),seq:nextSeq(),date:"2026-06-09",amount:59000,memo:""});
   localStorage.setItem("patch-2026-06","1");save();
 }
-function donutSVG(segs){
-  const C=2*Math.PI*50,total=segs.reduce((s,x)=>s+x.v,0)||1;
-  const act=segs.filter(s=>s.v>0).length,gap=act>1?9:0;let off=0,p="";
-  segs.forEach(s=>{if(s.v<=0)return;const frac=s.v/total,len=Math.max(1,frac*C-gap);
-    p+=`<circle cx="60" cy="60" r="50" fill="none" stroke="${s.c}" stroke-width="15" stroke-linecap="round" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off-gap/2).toFixed(2)}"/>`;off+=frac*C;});
-  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line-soft)" stroke-width="15"/>${p}</svg>`;
+function ratioBreakdown(parts){
+  const total=parts.reduce((sum,part)=>sum+part.value,0);
+  const bar=total?parts.filter(part=>part.value>0).map(part=>
+    `<span class="ratio-${part.tone}" style="width:${part.value/total*100}%"></span>`).join(""):"";
+  const detail=parts.map(part=>
+    `<div class="ratio-${part.tone}"><dt>${part.label}</dt><dd>${part.display}${part.note?`<span>${part.note}</span>`:""}</dd></div>`).join("");
+  return `<div class="ratio-bar" aria-hidden="true">${bar}</div><dl class="ratio-detail">${detail}</dl>`;
 }
 function sorted(){return [...data].sort((a,b)=>a.seq-b.seq);}
 function nextSeq(){return data.reduce((m,r)=>Math.max(m,r.seq),0)+1;}
@@ -484,35 +668,24 @@ function rankOf(total){
   if(total>=0)return {name:"ルーキー",em:"🔰"};
   return {name:"修行中",em:"💪"};
 }
-function confetti(){
-  const cols=["#16c97a","#2f7bff","#ffb300","#ff5e62","#7b61ff"];
-  const box=document.createElement("div");box.className="confetti";
-  for(let i=0;i<26;i++){const p=document.createElement("i");
-    p.style.left=Math.random()*100+"vw";p.style.background=cols[i%cols.length];
-    p.style.animationDuration=(1+Math.random()*0.8)+"s";p.style.animationDelay=(Math.random()*0.25)+"s";
-    p.style.transform="translateY(0) rotate("+(Math.random()*360)+"deg)";box.appendChild(p);}
-  document.body.appendChild(box);setTimeout(()=>box.remove(),2200);
-}
 
-function showTab(name){curTab=name;document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.id==="tab-"+name));document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));window.scrollTo(0,0);}
+function showTab(name){curTab=name;document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.id==="tab-"+name));document.querySelectorAll("#nav button").forEach(b=>{const active=b.dataset.tab===name;b.classList.toggle("on",active);if(active)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});window.scrollTo(0,0);}
 
 /* TODAY */
 function refreshToday(){
   const d=new Date(todayISO()+"T00:00:00");
+  $("#t-date").dateTime=todayISO();
   $("#t-date").innerHTML=`${d.getMonth()+1}月${d.getDate()}日<span class="wd">(${DOW[d.getDay()]})</span>`;
   const r=getDay(todayISO());
   $("#t-seq").textContent=r?`${r.seq}回目`:`${nextSeq()}回目`;
-  if(document.activeElement!==$("#t-amt")){const amt=r?r.amount:0;tSign=amt<0?-1:1;$("#t-amt").value=amt?Math.abs(amt).toLocaleString("ja-JP"):"";syncTSign();updateEff();}
+  if(document.activeElement!==$("#t-amt")){const amt=r?r.amount:0;tSign=amt<0?-1:1;$("#t-amt").value=amt?Math.abs(amt).toLocaleString("ja-JP"):"";syncTSign();}
 }
-function syncTSign(){document.querySelectorAll("#t-sign button").forEach(b=>b.classList.toggle("on",+b.dataset.sign===tSign));}
+function syncTSign(){document.querySelectorAll("#t-sign button").forEach(b=>{const active=+b.dataset.sign===tSign;b.classList.toggle("on",active);b.setAttribute("aria-pressed",active);});}
 function tParse(){const v=$("#t-amt").value.replace(/[^\d]/g,"");return v?parseInt(v,10):0;}
-function updateEff(){const a=tParse()*tSign;const e=$("#t-eff");if(a===0){e.innerHTML="";return;}
-  const others=data.filter(r=>r.date!==todayISO()).reduce((s,r)=>s+r.amount,0);
-  e.innerHTML=`今日 <b style="color:${a>=0?'var(--profit)':'var(--loss)'}">${yenS(a)}</b> ・ 累計 <b>${yenS(others+a)}</b>`;}
-function saveTodayAmount(){const amount=tParse()*tSign;let r=getDay(todayISO());const isNew=!r;
+function saveTodayAmount(){const amount=tParse()*tSign;let r=getDay(todayISO());
   if(!r){if(amount===0)return;r={id:uid(),seq:nextSeq(),date:todayISO(),amount:0,memo:""};data.push(r);}
-  const wasPos=r.amount>0;r.amount=amount;save();refreshToday();refreshAnalytics();
-  if(amount>0&&(isNew||!wasPos)){confetti();}}
+  r.amount=amount;save();refreshToday();refreshAnalytics();
+}
 
 /* ANALYTICS */
 function refreshAnalytics(){
@@ -526,46 +699,86 @@ function refreshAnalytics(){
   const best=rows.reduce((m,r)=>r.amount>(m?m.amount:-Infinity)?r:m,null);
   const worst=rows.reduce((m,r)=>r.amount<(m?m.amount:Infinity)?r:m,null);
 
-  // hero
-  const hero=$("#hero");hero.classList.toggle("pos",total>=0);hero.classList.toggle("neg",total<0);
-  $("#hero-total").textContent=yenS(total);
-  if(lastTotal!==null&&total!==lastTotal){const el=$("#hero-total");el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump");}
-  lastTotal=total;
-  const rk=rankOf(total);$("#rank-name").textContent=rk.name;$("#rank-pill").querySelector(".em").textContent=rk.em;
-  const st=streakInfo(rows);
-  $("#streak-text").textContent=st.text;$("#streak-pill").querySelector(".em").textContent=st.em;
-  $("#streak-pill").style.display=st.text?"inline-flex":"none";
-  $("#hero-sub").innerHTML=count?`通算 <b>${count}回</b> ・ 平均 <b>${yenS(Math.round(total/count))}</b>/回`:"さあ記録をはじめよう！";
-  $("#brand-sub").textContent=count?`${rk.name} ・ 通算${count}回`:"記録をはじめよう";
+  const totalEl=$("#hero-total");
+  const formattedTotal=yenS(total);
+  const prefixEnd=formattedTotal.indexOf("¥")+1;
+  totalEl.firstElementChild.textContent=formattedTotal.slice(0,prefixEnd);
+  totalEl.lastElementChild.textContent=formattedTotal.slice(prefixEnd);
+  totalEl.classList.toggle("is-long",formattedTotal.length>10);
+  const balanceTone=total>0?"positive":total<0?"negative":"neutral";
+  $("#balance-summary").dataset.tone=balanceTone;
+  drawHomeTrend(rows);
+  const rk=rankOf(total),st=streakInfo(rows);
+  $("#hero-sub").innerHTML=count?`通算 <b>${count}回</b> ／ 平均 <b>${yenS(Math.round(total/count))}</b>/回`:"まだ記録がありません";
+  $("#brand-sub").textContent=count?[rk.name,st.text].filter(Boolean).join(" ／ "):"記録をはじめよう";
 
   // tiles
   const wr=decided?winD/decided*100:0;
   $("#st-wr").textContent=decided?wr.toFixed(1)+"%":"—";
   $("#st-best").textContent=best&&best.amount>0?yenS(best.amount):"—";
   $("#st-month").textContent=yenS(monthSum);
-  const tm=$("#tile-month");tm.classList.toggle("g",monthSum>=0);tm.classList.toggle("r",monthSum<0);
-  tm.querySelector(".k").style.color=monthSum<0?"var(--loss)":"var(--profit)";
+  const tm=$("#tile-month");tm.classList.toggle("g",monthSum>0);tm.classList.toggle("r",monthSum<0);
 
-  // 勝率ドーナツ
-  $("#wr-donut").innerHTML=donutSVG([{v:winD,c:'#5e9079'},{v:loseD,c:'#c57e78'},{v:drawD,c:'#dad3ca'}])+
-    `<div class="ctr"><div class="big" style="font-size:23px;color:${wr>=50?'var(--profit)':'var(--loss)'}">${decided?wr.toFixed(1)+'%':'—'}</div><div class="cap">勝率</div></div>`;
-  $("#wr-legend").innerHTML=`<div class="legrow">`+
-    `<div class="legcell g"><div class="ll">勝った日</div><div class="lvv">${winD}<span class="u">日</span></div></div>`+
-    `<div class="legcell r"><div class="ll">負けた日</div><div class="lvv">${loseD}<span class="u">日</span></div></div>`+
-    `<div class="legcell n"><div class="ll">±0の日</div><div class="lvv">${drawD}<span class="u">日</span></div></div></div>`;
-  // 勝ち額 vs 負け額ドーナツ
+  $("#wr-value").textContent=decided?wr.toFixed(1)+"%":"—";
+  $("#wr-breakdown").innerHTML=ratioBreakdown([
+    {tone:"win",label:"勝った日",value:winD,display:winD,note:"日"},
+    {tone:"loss",label:"負けた日",value:loseD,display:loseD,note:"日"},
+    {tone:"even",label:"±0の日",value:drawD,display:drawD,note:"日"}
+  ]);
   const won=rows.filter(r=>r.amount>0).reduce((s,r)=>s+r.amount,0);
   const lost=rows.filter(r=>r.amount<0).reduce((s,r)=>s+Math.abs(r.amount),0);
-  $("#pl-donut").innerHTML=donutSVG([{v:won,c:'#5e9079'},{v:lost,c:'#c57e78'}])+
-    `<div class="ctr"><div class="big" style="font-size:15px;color:${total>=0?'var(--profit)':'var(--loss)'}">${yenS(total)}</div><div class="cap">純利益</div></div>`;
-  $("#pl-legend").innerHTML=`<div class="legrow">`+
-    `<div class="legcell g"><div class="ll">勝ち額</div><div class="lvv" style="color:var(--profit)">${yenS(won)}</div><div class="lss">${winD}日ぶん</div></div>`+
-    `<div class="legcell r"><div class="ll">負け額</div><div class="lvv" style="color:var(--loss)">-¥${lost.toLocaleString('ja-JP')}</div><div class="lss">${loseD}日ぶん</div></div></div>`;
+  const netValue=$("#pl-value");
+  netValue.textContent=formattedTotal;
+  netValue.dataset.tone=balanceTone;
+  $("#pl-breakdown").innerHTML=ratioBreakdown([
+    {tone:"win",label:"勝ち額",value:won,display:yenS(won),note:`${winD}日`},
+    {tone:"loss",label:"負け額",value:lost,display:yenS(-lost),note:`${loseD}日`}
+  ]);
 
   drawCum(rows);renderMonthList(rows);renderDowList(rows);
   renderHist(rows,$("#recent"),6,false);
   renderHist(rows,$("#hist"),showAll?9999:14,true);
   $("#hist-count").textContent=`全${count}件`;
+}
+function drawHomeTrend(rows){
+  const box=$("#hero-trend");
+  if(!rows.length){
+    box.innerHTML='<p class="empty">収支を記録すると、ここに推移が表示されます。</p>';
+    return;
+  }
+  const start=homeRange?Math.max(0,rows.length-homeRange):0;
+  const view=rows.slice(start);
+  const baseline=rows.slice(0,start).reduce((sum,r)=>sum+r.amount,0);
+  let running=baseline;
+  const values=[baseline,...view.map(r=>(running+=r.amount))];
+  const low=values.reduce((min,v)=>Math.min(min,v),0);
+  const high=values.reduce((max,v)=>Math.max(max,v),0);
+  const rough=Math.max(1,high-low)/3;
+  const power=10**Math.floor(Math.log10(rough));
+  const step=Math.max(1,([1,2,2.5,5,10].find(n=>n*power>=rough)||10)*power);
+  const min=Math.floor(low/step)*step,max=Math.max(min+step,Math.ceil(high/step)*step);
+  const W=480,H=116,T=8,B=108;
+  const x=i=>4+(W-8)*i/(values.length-1);
+  const y=v=>B-(v-min)/(max-min)*(B-T);
+  const tickText=n=>n===0?'¥0':(n<0?'−':'')+'¥'+(Math.abs(n)>=10000?Number((Math.abs(n)/10000).toFixed(2))+'万':Math.abs(n).toLocaleString('ja-JP'));
+  const ticks=Array.from({length:Math.round((max-min)/step)+1},(_,i)=>min+i*step);
+  const line=values.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(2)} ${y(v).toFixed(2)}`).join(' ');
+  const area=line+` L ${x(values.length-1)} ${y(0)} L ${x(0)} ${y(0)} Z`;
+  const dateLabel=r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date)?r.date.slice(5).replace('-', '/').replace(/(^|\/)0/g,'$1'):`#${r.seq}`;
+  const trendColor=running<0?"var(--loss)":"var(--profit)";
+  const trendFill=running<0?"var(--loss-soft)":"var(--profit-soft)";
+  const caption=`累計収支の推移。表示中${view.length}件。最初 ${yenS(baseline)}、現在 ${yenS(running)}。`;
+  box.innerHTML=`<div class="trend-chart">
+    <div class="trend-y" aria-hidden="true">${ticks.map(v=>`<span style="top:${y(v)/H*100}%">${tickText(v)}</span>`).join('')}</div>
+    <div class="trend-plot"><svg role="img" aria-label="${caption}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      ${ticks.map(v=>`<path d="M0 ${y(v)}H${W}" stroke="${v===0?'#a8b7c6':'#e4eaf0'}" vector-effect="non-scaling-stroke" stroke-width="1"/>`).join('')}
+      <path d="${area}" fill="${trendFill}"/>
+      <path d="M0 ${y(0)}H${W}" stroke="#a8b7c6" vector-effect="non-scaling-stroke" stroke-width="1"/>
+      <path d="${line}" fill="none" stroke="${trendColor}" vector-effect="non-scaling-stroke" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M${x(values.length-1)} ${y(running)}h.01" stroke="${trendColor}" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
+    </svg></div>
+    <div class="trend-dates" aria-hidden="true"><span>${start?dateLabel(rows[start-1]):'開始'}</span><span>${dateLabel(view.at(-1))}</span></div>
+  </div>`;
 }
 function streakInfo(rows){
   if(!rows.length)return {text:"",em:"🔥"};
@@ -588,17 +801,17 @@ function drawCum(all){
   const n=pts.length;const x=i=>pL+(n<=1?(W-pL-pR)/2:i*(W-pL-pR)/(n-1));const y=v=>pT+(mx-v)/(mx-mn)*(H-pT-pB);const z=y(0);
   let line="";pts.forEach((p,i)=>line+=(i?"L":"M")+x(i).toFixed(1)+" "+y(p.val).toFixed(1)+" ");
   const area=line+`L ${x(n-1).toFixed(1)} ${z.toFixed(1)} L ${x(0).toFixed(1)} ${z.toFixed(1)} Z`;
-  const last=pts[n-1].val;const col=last>=0?"#5e9079":"#c57e78";const fill=last>=0?"rgba(94,144,121,.20)":"rgba(197,126,120,.18)";const fade=last>=0?"rgba(94,144,121,0)":"rgba(197,126,120,0)";
-  const yl=v=>`<text x="${W-2}" y="${(y(v)+3).toFixed(1)}" text-anchor="end" font-size="10.5" fill="#b9b1a7" font-weight="800">${yen(v)}</text>`;
+  const last=pts[n-1].val;const col=last>=0?"var(--profit)":"var(--loss)";
+  const yl=v=>`<text x="${W-2}" y="${(y(v)+3).toFixed(1)}" text-anchor="end" font-size="10.5" fill="var(--ink-faint)" font-weight="500">${yen(v)}</text>`;
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${fill}"/><stop offset="1" stop-color="${fade}"/></linearGradient></defs>
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".15"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
     <line x1="0" y1="${z.toFixed(1)}" x2="${W}" y2="${z.toFixed(1)}" stroke="#e8e2d9" stroke-width="1.5" stroke-dasharray="3 4"/>
     <path d="${area}" fill="url(#cg)"/>
     <path d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     <circle cx="${x(n-1).toFixed(1)}" cy="${y(last).toFixed(1)}" r="4.5" fill="${col}" stroke="#fff" stroke-width="2.5"/>
     ${yl(mx)}${yl(0)}
-    <text x="2" y="${H-5}" font-size="10.5" fill="#b9b1a7" font-weight="800">${pts[1]?pts[1].seq:""}回</text>
-    <text x="${W-2}" y="${H-5}" text-anchor="end" font-size="10.5" fill="#b9b1a7" font-weight="800">${pts[n-1].seq}回</text>
+    <text x="2" y="${H-5}" font-size="10.5" fill="var(--ink-faint)" font-weight="500">${pts[1]?pts[1].seq:""}回</text>
+    <text x="${W-2}" y="${H-5}" text-anchor="end" font-size="10.5" fill="var(--ink-faint)" font-weight="500">${pts[n-1].seq}回</text>
   </svg><div class="tip" id="cum-tip"></div>`;
   const svg=box.querySelector("svg"),tip=$("#cum-tip");
   const move=cx=>{const rc=svg.getBoundingClientRect();const rel=(cx-rc.left)/rc.width*W;let bi=0,bd=1e9;pts.forEach((p,i)=>{const dd=Math.abs(x(i)-rel);if(dd<bd){bd=dd;bi=i;}});const p=pts[bi];tip.style.opacity=1;tip.style.left=(x(bi)/W*100)+"%";tip.style.top=(y(p.val)/H*100)+"%";tip.innerHTML=`<div class="d">${p.seq}回目${p.date?" ・ "+p.date.replace(/-/g,"/"):""}</div>${yen(p.val)}`;};
@@ -657,10 +870,14 @@ function renderHist(rows,box,limit,grouped){
     let dthtml;
     if(r.date){const dt=new Date(r.date+"T00:00:00");dthtml=`<div class="md">${dt.getMonth()+1}/${dt.getDate()}</div><div class="dw">${DOW[dt.getDay()]}</div>`;}
     else dthtml=`<div class="md" style="color:var(--ink-faint)">—</div><div class="dw">日付なし</div>`;
-    html+=`<div class="row" data-id="${r.id}"><div class="seq">#${r.seq}</div><div class="dt">${dthtml}</div>
+    html+=`<div class="row" data-id="${esc(String(r.id)).replace(/"/g,"&quot;")}"><div class="seq">#${r.seq}</div><div class="dt">${dthtml}</div>
       <div class="mid"><div class="memo ${r.memo?'':'none'}">${r.memo?esc(r.memo):"（メモなし）"}</div></div>
       <div class="ar"><div class="amt ${pos}">${yenS(r.amount)}</div><div class="cum">累計 ${yen(cum[r.id])}</div></div></div>`;});
-  box.innerHTML=html;box.querySelectorAll(".row").forEach(el=>el.onclick=()=>openEntry(el.dataset.id));
+  box.innerHTML=html;box.querySelectorAll(".row").forEach(el=>{
+    el.tabIndex=0;el.setAttribute("role","button");
+    el.onclick=()=>openEntry(el.dataset.id);
+    el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();el.click();}};
+  });
   if(box.id==="hist"){const see=$("#see");if(desc.length>14){see.style.display="block";see.textContent=showAll?"折りたたむ":`すべて表示（あと${desc.length-14}件）`;}else see.style.display="none";}
 }
 
@@ -671,9 +888,9 @@ function openEntry(id){
     eSign=r.amount<0?-1:1;$("#e-amt").value=Math.abs(r.amount)?Math.abs(r.amount).toLocaleString("ja-JP"):"";
     $("#e-date").value=r.date||"";$("#e-memo").value=r.memo||"";$("#e-del").style.display="block";
   }else{$("#sheet-title").textContent=`記録を追加（${nextSeq()}回目）`;eSign=1;$("#e-amt").value="";$("#e-date").value=todayISO();$("#e-memo").value="";$("#e-del").style.display="none";}
-  syncESign();ePreview();$("#scrim").classList.add("open");$("#entry").classList.add("open");
+  syncESign();ePreview();setSheet("entry","#scrim",true);
 }
-function closeEntry(){$("#scrim").classList.remove("open");$("#entry").classList.remove("open");}
+function closeEntry(){setSheet("entry","#scrim",false);}
 function syncESign(){document.querySelectorAll("#signseg button").forEach(b=>b.classList.toggle("on",+b.dataset.sign===eSign));}
 function eParse(){const v=$("#e-amt").value.replace(/[^\d]/g,"");return v?parseInt(v,10):0;}
 function ePreview(){const a=eParse()*eSign,p=$("#e-preview");if(!a){p.innerHTML="";return;}p.innerHTML=`<b class="num" style="color:${a>=0?'var(--profit)':'var(--loss)'}">${yenS(a)}</b>`;}
@@ -686,8 +903,26 @@ function saveEntry(){const amount=eParse()*eSign,date=$("#e-date").value||"",mem
 function delEntry(){if(!editId||!confirm("この記録を削除しますか？"))return;data=data.filter(x=>x.id!==editId);save();refreshToday();refreshAnalytics();closeEntry();toast("削除したよ");}
 
 /* DATA */
-function openData(){$("#scrim2").classList.add("open");$("#data").classList.add("open");}
-function closeData(){$("#scrim2").classList.remove("open");$("#data").classList.remove("open");}
+function openData(){setSheet("data","#scrim2",true);}
+function closeData(){setSheet("data","#scrim2",false);}
+let previousFocus=null;
+function setSheet(id, scrim, open){
+  const panel=$("#"+id);
+  if(open)previousFocus=document.activeElement;
+  panel.inert=!open;
+  panel.classList.toggle("open",open);
+  $(scrim).classList.toggle("open",open);
+  $(".wrap").inert=open;
+  document.body.classList.toggle("sheet-open",open);
+  if(open)panel.querySelector("[data-close]").focus({preventScroll:true});
+  else (previousFocus?.isConnected?previousFocus:$("#open-data")).focus({preventScroll:true});
+}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.dataset.close==="entry"?closeEntry():closeData());
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
+  if($("#entry").classList.contains("open"))closeEntry();
+  else if($("#data").classList.contains("open"))closeData();
+});
 function exportData(){const blob=new Blob([JSON.stringify({app:"smabura",version:3,exportedAt:new Date().toISOString(),records:data},null,2)],{type:"application/json"});
   const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=`smabura-backup-${todayISO()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);toast("書き出したよ");}
 function importData(file){const fr=new FileReader();fr.onload=()=>{try{const o=JSON.parse(fr.result);const recs=Array.isArray(o)?o:o.records;if(!Array.isArray(recs))throw 0;
@@ -709,8 +944,13 @@ function importPaste(){const txt=$("#paste").value.trim();if(!txt){toast("貼り
 /* EVENTS */
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 $("#go-hist").onclick=()=>showTab("history");
-$("#t-amt").addEventListener("input",()=>{let v=$("#t-amt").value.replace(/[^\d]/g,"");$("#t-amt").value=v?parseInt(v,10).toLocaleString("ja-JP"):"";updateEff();saveTodayAmount();});
-document.querySelectorAll("#t-sign button").forEach(b=>b.onclick=()=>{tSign=+b.dataset.sign;syncTSign();updateEff();saveTodayAmount();});
+$("#home-range").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+  homeRange=+b.dataset.period;
+  $("#home-range").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  drawHomeTrend(sorted());
+});
+$("#t-amt").addEventListener("input",()=>{let v=$("#t-amt").value.replace(/[^\d]/g,"");$("#t-amt").value=v?parseInt(v,10).toLocaleString("ja-JP"):"";saveTodayAmount();});
+document.querySelectorAll("#t-sign button").forEach(b=>b.onclick=()=>{tSign=+b.dataset.sign;syncTSign();saveTodayAmount();});
 $("#range-seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{range=+b.dataset.r;$("#range-seg").querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");drawCum(sorted());});
 $("#see").onclick=()=>{showAll=!showAll;renderHist(sorted(),$("#hist"),showAll?9999:14,true);};
 $("#add-btn").onclick=()=>openEntry(null);
@@ -724,34 +964,6 @@ $("#wipe-btn").onclick=()=>{if(confirm("本当にすべての記録を削除し�
 
 applyPatches();refreshToday();refreshAnalytics();
 
-/* スクロール出現アニメ（高級感）。reduced-motionはCSS側で尊重 */
-(function(){
-  const els=document.querySelectorAll('.hero,.today,.tiles,.card,.page-title');
-  els.forEach(el=>el.classList.add('reveal'));
-  if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('inview'));return;}
-  let io;
-  try{
-    io=new IntersectionObserver((ents)=>{ents.forEach(e=>{if(e.isIntersecting)e.target.classList.add('inview');});},{threshold:.05,rootMargin:"0px 0px -5% 0px"});
-    els.forEach(el=>io.observe(el));
-  }catch(e){els.forEach(el=>el.classList.add('inview'));return;}
-  // タブ切替時、新タブの要素を軽くリセットしてスタッガー再生（画面内のみ即再生、画面外はIOがスクロールで拾う）
-  const orig=showTab;
-  showTab=function(name){
-    orig(name);
-    requestAnimationFrame(()=>{
-      const list=document.querySelectorAll('#tab-'+name+' .reveal');
-      list.forEach((el,i)=>{
-        const r=el.getBoundingClientRect();
-        const visible=r.top<window.innerHeight*0.96 && r.bottom>40;
-        if(visible){el.style.transitionDelay=(Math.min(i,6)*50)+'ms';el.classList.remove('inview');}
-      });
-      requestAnimationFrame(()=>list.forEach(el=>{
-        const r=el.getBoundingClientRect();
-        if(r.top<window.innerHeight*0.96 && r.bottom>40)el.classList.add('inview');
-      }));
-    });
-  };
-})();
 </script>
 </body>
 </html>
