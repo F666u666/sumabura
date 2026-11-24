@@ -393,6 +393,25 @@ body.sheet-open{overflow:hidden}
  .balance-totals{gap:8px}.balance-month{padding-left:8px}
  .trend-range button{padding-inline:6px}
 }
+/* === motion (added) === */
+@keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#hist .row{animation:rowIn .3s ease both}
+#hist .row:nth-child(2){animation-delay:.03s}
+#hist .row:nth-child(3){animation-delay:.06s}
+#hist .row:nth-child(4){animation-delay:.09s}
+#hist .row:nth-child(5){animation-delay:.12s}
+#hist .row:nth-child(6){animation-delay:.15s}
+#hist .row:nth-child(7){animation-delay:.18s}
+#hist .row:nth-child(8){animation-delay:.21s}
+@keyframes areaIn{from{opacity:0}to{opacity:1}}
+.anim-area{animation:areaIn 1s ease both}
+.primary:active{transform:scale(.98)}
+#nav button:active .nb{transform:scale(.9)}
+.amount-box .sign button:active{transform:scale(.92)}
+#range-seg button,#home-range button,#signseg button,#t-sign button{transition:transform .12s ease}
+#range-seg button:active,#home-range button:active,#signseg button:active,#t-sign button:active{transform:scale(.93)}
+.fx-burst{position:fixed;inset:0;pointer-events:none;z-index:95}
+.fx-burst span{position:absolute;left:50%;top:26%;width:8px;height:12px;border-radius:2px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -661,6 +680,57 @@ function getDay(date){return date?data.find(r=>r.date===date)||null:null;}
 let toastT;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
 
+/* MOTION (added) */
+const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(el,to,fmt,dur){
+  if(!el)return;
+  dur=dur||600;
+  const from=parseFloat(el.dataset.v||"0");
+  el.dataset.v=to;
+  if(reduceMotion||from===to){el.textContent=fmt(to);return;}
+  if(el._cu)cancelAnimationFrame(el._cu);
+  const t0=performance.now();
+  const step=t=>{
+    const p=Math.min(1,(t-t0)/dur),e=p===1?1:1-Math.pow(2,-10*p);
+    el.textContent=fmt(from+(to-from)*e);
+    if(p<1)el._cu=requestAnimationFrame(step);
+  };
+  el._cu=requestAnimationFrame(step);
+}
+const fxT={};
+function fxReady(k){const n=performance.now();if(fxT[k]&&n-fxT[k]<1000)return false;fxT[k]=n;return true;}
+function drawIn(path,key){
+  if(!path||reduceMotion||!fxReady(key))return;
+  let len=0;try{len=path.getTotalLength();}catch(e){return;}
+  if(!len||!isFinite(len))return;
+  path.style.strokeDasharray=len+"";
+  path.style.strokeDashoffset=len+"";
+  path.getBoundingClientRect();
+  path.style.transition="stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)";
+  path.style.strokeDashoffset="0";
+  setTimeout(()=>{path.style.strokeDasharray="none";path.style.strokeDashoffset="";path.style.transition="";},1000);
+}
+function growBars(scope){
+  if(reduceMotion||!scope||!fxReady("bars"))return;
+  scope.querySelectorAll(".dbar2 i,.ratio-bar span").forEach(b=>{
+    const w=b.style.width;if(!w||w==="0%")return;
+    b.style.width="0%";b.getBoundingClientRect();
+    b.style.transition="width .8s cubic-bezier(.22,.9,.28,1)";
+    b.style.width=w;
+  });
+}
+function burst(){
+  if(reduceMotion||typeof Element.prototype.animate!=="function")return;
+  const c=document.createElement("div");c.className="fx-burst";document.body.appendChild(c);
+  const cols=["#2f7bff","#22c58b","#ffb020","#ff6b9d"];
+  for(let i=0;i<16;i++){
+    const s=document.createElement("span");s.style.background=cols[i%4];c.appendChild(s);
+    const dx=(Math.random()*2-1)*130,dy=60+Math.random()*130,r=Math.random()*300-150;
+    s.animate([{transform:"translate(0,0) rotate(0deg)",opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${r}deg)`,opacity:0}],{duration:800+Math.random()*400,easing:"cubic-bezier(.17,.67,.35,1)"});
+  }
+  setTimeout(()=>c.remove(),1400);
+}
+
 function rankOf(total){
   if(total>=300000)return {name:"レジェンド",em:"👑"};
   if(total>=150000)return {name:"エリート",em:"💎"};
@@ -703,7 +773,7 @@ function refreshAnalytics(){
   const formattedTotal=yenS(total);
   const prefixEnd=formattedTotal.indexOf("¥")+1;
   totalEl.firstElementChild.textContent=formattedTotal.slice(0,prefixEnd);
-  totalEl.lastElementChild.textContent=formattedTotal.slice(prefixEnd);
+  countUp(totalEl.lastElementChild,total,n=>Math.abs(Math.round(n)).toLocaleString("ja-JP"));
   totalEl.classList.toggle("is-long",formattedTotal.length>10);
   const balanceTone=total>0?"positive":total<0?"negative":"neutral";
   $("#balance-summary").dataset.tone=balanceTone;
@@ -714,12 +784,12 @@ function refreshAnalytics(){
 
   // tiles
   const wr=decided?winD/decided*100:0;
-  $("#st-wr").textContent=decided?wr.toFixed(1)+"%":"—";
-  $("#st-best").textContent=best&&best.amount>0?yenS(best.amount):"—";
-  $("#st-month").textContent=yenS(monthSum);
+  const stWr=$("#st-wr");if(decided)countUp(stWr,wr,n=>n.toFixed(1)+"%");else{stWr.textContent="—";delete stWr.dataset.v;}
+  const stBest=$("#st-best");if(best&&best.amount>0)countUp(stBest,best.amount,yenS);else{stBest.textContent="—";delete stBest.dataset.v;}
+  countUp($("#st-month"),monthSum,yenS);
   const tm=$("#tile-month");tm.classList.toggle("g",monthSum>0);tm.classList.toggle("r",monthSum<0);
 
-  $("#wr-value").textContent=decided?wr.toFixed(1)+"%":"—";
+  const wrVal=$("#wr-value");if(decided)countUp(wrVal,wr,n=>n.toFixed(1)+"%");else{wrVal.textContent="—";delete wrVal.dataset.v;}
   $("#wr-breakdown").innerHTML=ratioBreakdown([
     {tone:"win",label:"勝った日",value:winD,display:winD,note:"日"},
     {tone:"loss",label:"負けた日",value:loseD,display:loseD,note:"日"},
@@ -728,7 +798,7 @@ function refreshAnalytics(){
   const won=rows.filter(r=>r.amount>0).reduce((s,r)=>s+r.amount,0);
   const lost=rows.filter(r=>r.amount<0).reduce((s,r)=>s+Math.abs(r.amount),0);
   const netValue=$("#pl-value");
-  netValue.textContent=formattedTotal;
+  countUp(netValue,total,yenS);
   netValue.dataset.tone=balanceTone;
   $("#pl-breakdown").innerHTML=ratioBreakdown([
     {tone:"win",label:"勝ち額",value:won,display:yenS(won),note:`${winD}日`},
@@ -739,6 +809,7 @@ function refreshAnalytics(){
   renderHist(rows,$("#recent"),6,false);
   renderHist(rows,$("#hist"),showAll?9999:14,true);
   $("#hist-count").textContent=`全${count}件`;
+  growBars(document);
 }
 function drawHomeTrend(rows){
   const box=$("#hero-trend");
@@ -772,13 +843,14 @@ function drawHomeTrend(rows){
     <div class="trend-y" aria-hidden="true">${ticks.map(v=>`<span style="top:${y(v)/H*100}%">${tickText(v)}</span>`).join('')}</div>
     <div class="trend-plot"><svg role="img" aria-label="${caption}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
       ${ticks.map(v=>`<path d="M0 ${y(v)}H${W}" stroke="${v===0?'#a8b7c6':'#e4eaf0'}" vector-effect="non-scaling-stroke" stroke-width="1"/>`).join('')}
-      <path d="${area}" fill="${trendFill}"/>
+      <path class="anim-area" d="${area}" fill="${trendFill}"/>
       <path d="M0 ${y(0)}H${W}" stroke="#a8b7c6" vector-effect="non-scaling-stroke" stroke-width="1"/>
-      <path d="${line}" fill="none" stroke="${trendColor}" vector-effect="non-scaling-stroke" stroke-width="2" stroke-linejoin="round"/>
+      <path class="anim-line" d="${line}" fill="none" stroke="${trendColor}" vector-effect="non-scaling-stroke" stroke-width="2" stroke-linejoin="round"/>
       <path d="M${x(values.length-1)} ${y(running)}h.01" stroke="${trendColor}" stroke-width="6" vector-effect="non-scaling-stroke" stroke-linecap="round"/>
     </svg></div>
     <div class="trend-dates" aria-hidden="true"><span>${start?dateLabel(rows[start-1]):'開始'}</span><span>${dateLabel(view.at(-1))}</span></div>
   </div>`;
+  const hlp=box.querySelector(".anim-line");if(hlp)drawIn(hlp,"home");
 }
 function streakInfo(rows){
   if(!rows.length)return {text:"",em:"🔥"};
@@ -806,13 +878,14 @@ function drawCum(all){
   box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
     <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".15"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
     <line x1="0" y1="${z.toFixed(1)}" x2="${W}" y2="${z.toFixed(1)}" stroke="#e8e2d9" stroke-width="1.5" stroke-dasharray="3 4"/>
-    <path d="${area}" fill="url(#cg)"/>
-    <path d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path class="anim-area" d="${area}" fill="url(#cg)"/>
+    <path class="anim-line" d="${line}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     <circle cx="${x(n-1).toFixed(1)}" cy="${y(last).toFixed(1)}" r="4.5" fill="${col}" stroke="#fff" stroke-width="2.5"/>
     ${yl(mx)}${yl(0)}
     <text x="2" y="${H-5}" font-size="10.5" fill="var(--ink-faint)" font-weight="500">${pts[1]?pts[1].seq:""}回</text>
     <text x="${W-2}" y="${H-5}" text-anchor="end" font-size="10.5" fill="var(--ink-faint)" font-weight="500">${pts[n-1].seq}回</text>
   </svg><div class="tip" id="cum-tip"></div>`;
+  const clp=box.querySelector(".anim-line");if(clp)drawIn(clp,"cum");
   const svg=box.querySelector("svg"),tip=$("#cum-tip");
   const move=cx=>{const rc=svg.getBoundingClientRect();const rel=(cx-rc.left)/rc.width*W;let bi=0,bd=1e9;pts.forEach((p,i)=>{const dd=Math.abs(x(i)-rel);if(dd<bd){bd=dd;bi=i;}});const p=pts[bi];tip.style.opacity=1;tip.style.left=(x(bi)/W*100)+"%";tip.style.top=(y(p.val)/H*100)+"%";tip.innerHTML=`<div class="d">${p.seq}回目${p.date?" ・ "+p.date.replace(/-/g,"/"):""}</div>${yen(p.val)}`;};
   const end=()=>tip.style.opacity=0;
@@ -899,7 +972,7 @@ function saveEntry(){const amount=eParse()*eSign,date=$("#e-date").value||"",mem
   if(amount===0&&!memo){toast("金額を入力してね");return;}
   if(editId){Object.assign(data.find(x=>x.id===editId),{amount,date,memo});}
   else{const ex=getDay(date);if(date&&ex){Object.assign(ex,{amount,memo});}else{data.push({id:uid(),seq:nextSeq(),date,amount,memo});}}
-  save();refreshToday();refreshAnalytics();closeEntry();toast(editId?"更新したよ":"追加したよ");}
+  save();refreshToday();refreshAnalytics();closeEntry();if(!editId&&amount>0)burst();toast(editId?"更新したよ":"追加したよ");}
 function delEntry(){if(!editId||!confirm("この記録を削除しますか？"))return;data=data.filter(x=>x.id!==editId);save();refreshToday();refreshAnalytics();closeEntry();toast("削除したよ");}
 
 /* DATA */
