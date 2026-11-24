@@ -413,6 +413,24 @@ body.sheet-open{overflow:hidden}
 .fx-burst{position:fixed;inset:0;pointer-events:none;z-index:95}
 .fx-burst span{position:absolute;left:50%;top:26%;width:8px;height:12px;border-radius:2px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* ===== MOTION v2: ステージ演出（デモ級） ===== */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(420px 300px at 12% 6%, rgba(94,144,121,.20), rgba(94,144,121,0) 70%),
+   radial-gradient(460px 320px at 88% 22%, rgba(197,126,120,.16), rgba(197,126,120,0) 70%),
+   radial-gradient(520px 380px at 50% 96%, rgba(117,137,168,.15), rgba(117,137,168,0) 70%);
+  animation:v2-drift 16s ease-in-out infinite alternate}
+@keyframes v2-drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(0,-14px,0) scale(1.04)}}
+.wrap{position:relative;z-index:1}
+.balance-total{font-weight:700}
+#hero-total{transform-origin:18% 50%}
+#nav-pill{position:absolute;top:50%;transform:translateY(-50%);height:46px;border-radius:13px;background:var(--blue-soft);z-index:0;opacity:0;pointer-events:none}
+.nav button{z-index:1}
+.card-head h2::before,.recent-heading h2::before,.trend-heading h2::before{content:"";display:inline-block;width:4px;height:.95em;border-radius:2px;background:var(--blue);margin-right:8px;vertical-align:-.08em}
+.primary,.add-mini,.see,.seg button,#home-range button{transition:transform .22s cubic-bezier(.3,1.6,.4,1),background .15s,color .15s}
+.primary:active,.add-mini:active,.see:active{transform:scale(.94)}
+.v2-pulse{animation:v2-pulse 1.6s ease-in-out infinite}
+@keyframes v2-pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
@@ -681,7 +699,7 @@ let toastT;
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200);}
 
 /* MOTION (added) */
-const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduceMotion=!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 function countUp(el,to,fmt,dur){
   if(!el)return;
   dur=dur||600;
@@ -1037,6 +1055,100 @@ $("#wipe-btn").onclick=()=>{if(confirm("本当にすべての記録を削除し�
 
 applyPatches();refreshToday();refreshAnalytics();
 
+</script>
+<script>
+/* ===== MOTION v2: ステージ演出（デモ級） ===== */
+(function(){
+  var RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var FINE = !!(window.matchMedia && window.matchMedia("(pointer: fine)").matches);
+  var EASE = "cubic-bezier(.22,.9,.28,1)";
+  var cur = "home";
+  function anim(el, frames, opts){ if(!el || RM || !el.animate) return null; try{ return el.animate(frames, opts); }catch(e){ return null; } }
+  function choreo(name){
+    var sec = document.getElementById("tab-" + name); if(!sec) return;
+    Array.prototype.forEach.call(sec.children, function(el, i){
+      if(el.nodeType !== 1) return;
+      anim(el, [
+        {opacity:0, transform:"translateY(30px) scale(.965) rotate(.6deg)"},
+        {opacity:1, transform:"translateY(0px) scale(1) rotate(0deg)"}
+      ], {duration:640, delay:40 + i * 60, easing:EASE, fill:"backwards"});
+    });
+  }
+  /* --- nav pill --- */
+  var nav = document.getElementById("nav"), pill = null;
+  if(nav){ pill = document.createElement("div"); pill.id = "nav-pill"; nav.appendChild(pill); }
+  function movePill(name, instant){
+    if(!pill || !nav) return;
+    var btn = nav.querySelector('button[data-tab="' + name + '"]'); if(!btn) return;
+    var left = (btn.offsetLeft + 6) + "px", width = Math.max(0, btn.offsetWidth - 12) + "px";
+    pill.style.opacity = "1";
+    if(instant || RM || !pill.animate || !pill.style.left){ pill.style.left = left; pill.style.width = width; return; }
+    var fromLeft = pill.style.left, fromWidth = pill.style.width;
+    pill.style.left = left; pill.style.width = width;
+    try{ pill.animate([{left:fromLeft, width:fromWidth},{left:left, width:width}], {duration:480, easing:"cubic-bezier(.3,1.35,.35,1)"}); }catch(e){}
+  }
+  /* --- wrap showTab: 切り替えを「カードが飛んでくる」演出に --- */
+  if(typeof showTab === "function"){
+    var _showTab = showTab;
+    window.showTab = function(name){ cur = name; _showTab(name); choreo(name); movePill(name); };
+  }
+  /* --- hero pop: 数字が確定したら弾む --- */
+  var hero = document.getElementById("hero-total"), lastSettled = null, popT = null;
+  if(hero && "MutationObserver" in window){
+    new MutationObserver(function(){
+      clearTimeout(popT);
+      popT = setTimeout(function(){
+        var now = hero.textContent;
+        if(lastSettled !== null && now !== lastSettled){
+          anim(hero, [{transform:"scale(1)"},{transform:"scale(1.07)", offset:.35},{transform:"scale(1)"}], {duration:480, easing:"cubic-bezier(.3,1.4,.4,1)"});
+        }
+        lastSettled = now;
+      }, 380);
+    }).observe(hero, {childList:true, characterData:true, subtree:true});
+  }
+  /* --- chart end-point pulse --- */
+  function pulseLast(root){
+    if(!root) return;
+    var cs = root.querySelectorAll("circle"); if(!cs.length) return;
+    cs[cs.length - 1].classList.add("v2-pulse");
+  }
+  if(typeof drawHomeTrend === "function"){
+    var _dht = drawHomeTrend;
+    window.drawHomeTrend = function(rows){ _dht(rows); pulseLast(document.getElementById("hero-trend")); };
+  }
+  if(typeof drawCum === "function"){
+    var _dc = drawCum;
+    window.drawCum = function(all){ _dc(all); pulseLast(document.getElementById("cum-chart")); };
+  }
+  /* --- save celebration: プラス保存で紙吹雪（値は保存前に読む） --- */
+  document.addEventListener("click", function(e){
+    var btn = document.getElementById("e-save"); if(!btn) return;
+    if(e.target !== btn && !btn.contains(e.target)) return;
+    var amt = 0; try{ amt = eParse() * eSign; }catch(err){}
+    if(amt > 0 && typeof burst === "function") setTimeout(burst, 90);
+  }, true);
+  /* --- 3D tilt (PCのみ・控えめ) --- */
+  if(FINE && !RM){
+    document.querySelectorAll(".balance-summary, #tab-analysis .card, #tab-history .card").forEach(function(card){
+      card.addEventListener("pointermove", function(e){
+        var r = card.getBoundingClientRect(); if(!r.width) return;
+        var px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+        anim(card, [{transform:"perspective(900px) rotateX(" + (-py * 3.5).toFixed(2) + "deg) rotateY(" + (px * 3.5).toFixed(2) + "deg)"}], {duration:260, easing:"ease-out", fill:"forwards"});
+      });
+      card.addEventListener("pointerleave", function(){
+        anim(card, [{transform:"perspective(900px) rotateX(0deg) rotateY(0deg)"}], {duration:600, easing:"cubic-bezier(.3,1.4,.4,1)", fill:"forwards"});
+      });
+    });
+  }
+  /* --- entrance --- */
+  var head = document.querySelector(".head");
+  anim(head, [{opacity:0, transform:"translateY(-10px)"},{opacity:1, transform:"translateY(0px)"}], {duration:500, easing:EASE, fill:"backwards"});
+  choreo("home");
+  requestAnimationFrame(function(){ movePill("home", true); });
+  window.addEventListener("resize", function(){ movePill(cur, true); });
+  pulseLast(document.getElementById("hero-trend"));
+  pulseLast(document.getElementById("cum-chart"));
+})();
 </script>
 </body>
 </html>
